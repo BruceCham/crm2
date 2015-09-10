@@ -1,0 +1,23 @@
+{
+    "page/clue"                     :       "clue",
+    "page/cluepool"                 :       "cluepool",
+    "page/contacts"                 :       "contacts",
+    "page/customer"                 :       "customer",
+    "page/finance/cblist"           :       "cblist",
+    "page/finance/deallist"         :       "deallist",
+    "page/finance/gblist"           :       "gblist",
+    "page/highseas"                 :       "highseas",
+    "page/recheck"                  :       "recheck",
+    "page/service"                  :       "service",
+    "setting/basic"                 :       "basic",
+    "setting/cluepool"              :       "cluepool",
+    "setting/contacts"              :       "contacts",
+    "setting/customer"              :       "customer",
+    "setting/field"                 :       "field",
+    "setting/highseas"              :       "highseas",
+    "setting/observer"              :       "observer",
+    "setting/plan"                  :       "plan",
+    "setting/product"               :       "product",
+    "setting/role"                  :       "role",
+    "setting/tags"                  :       "tags"
+}
