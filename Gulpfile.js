@@ -22,9 +22,7 @@ gulp.task('less-min',function(){
   };
   return gulp.src([lessDir + 'all.less'])
         .pipe(plugins.plumber({errorHandler: onError}))
-        .pipe(plugins.less({
-            relativeUrls: true
-        }))
+        .pipe(plugins.less())
         .pipe(plugins.autoprefixer({
           browsers: ['last 20 versions'],
           cascade: true
@@ -44,23 +42,13 @@ gulp.task('less-min',function(){
  * @desc Html转js文件
 */
 gulp.task('jst',function(){
-  var onError = function(err) {
-      plugins.notify.onError({
-                  title:    "Gulp",
-                  subtitle: "Failure!",
-                  message:  "html error: <%= error.message %>",
-                  sound:    "Beep"
-              })(err);
-      this.emit('end');
-  };
   return gulp.src( srcPath + 'modules/**/*.html')
-        .pipe(plugins.plumber({errorHandler: onError}))
-        .pipe(plugins.minifyHtml())
         .pipe(plugins.cmdJst({
                 cmd : true,
-                output: "html",
-                prettify : true,
-                namespace : false
+                namespace : false,
+                evaluate: /##([\s\S]+?)##/g,
+                interpolate: /\{\{(.+?)\}\}/g,
+                escape: /\{\{\{\{-([\s\S]+?)\}\}\}\}/g
             }))
         .pipe(plugins.rename({suffix: '-html'}))
         .pipe(gulp.dest( srcPath + 'modules/' ))
@@ -72,7 +60,35 @@ gulp.task('jst',function(){
 gulp.task('look', function () {
     plugins.livereload.listen();
     gulp.watch([srcPath + '**/*.less'], ['less-min']);
-    gulp.watch([srcPath + '**/*.html'], ['jst']);
+    gulp.watch([srcPath + '**/*.html']).on('change',function(e){
+      var onError = function(err) {
+          plugins.notify.onError({
+                      title:    "Gulp",
+                      subtitle: "Failure!",
+                      message:  "html error: <%= error.message %>",
+                      sound:    "Beep"
+                  })(err);
+          this.emit('end');
+      };
+      return gulp.src( e.path,{ base: srcPath + 'modules/' } )
+            .pipe(plugins.plumber({errorHandler: onError}))
+            .pipe(plugins.cmdJst({
+                    cmd : true,
+                    namespace : false,
+                    evaluate: /##([\s\S]+?)##/g,
+                    interpolate: /\{\{(.+?)\}\}/g,
+                    escape: /\{\{\{\{-([\s\S]+?)\}\}\}\}/g
+                }))
+            .pipe(plugins.rename({suffix: '-html'}))
+            .pipe(gulp.dest( srcPath + 'modules/' ))
+            .pipe(plugins.notify({
+               title: 'Gulp',
+               subtitle: 'success',
+               message: 'jst OK',
+               sound: "Pop"
+            }))
+            .pipe(plugins.livereload());
+    });
 });
 
 /*
