@@ -127,13 +127,13 @@ gulp.task("copy",function(){
 */
 var pngquant = require('imagemin-pngquant');
 gulp.task('min-image', function () {
-    return  gulp.src([distPath + '**/*.{png,jpg,gif}'])
-            .pipe(plugins.imagemin({
-                progressive: true,
-                use: [pngquant()]
-            }))
-            // .pipe(pngquant({quality: '65-80', speed: 4})())
-            .pipe(gulp.dest( distPath ));
+    return gulp.src(distPath + '**/*.{png,jpg,gif}')
+        .pipe(plugins.imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest(distPath));
 });
 
 /*
