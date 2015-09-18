@@ -42,7 +42,17 @@ gulp.task('less-min',function(){
  * @desc Html转js文件
 */
 gulp.task('jst',function(){
+  var onError = function(err) {
+      plugins.notify.onError({
+                  title:    "Gulp",
+                  subtitle: "Failure!",
+                  message:  "html error: <%= error.message %>",
+                  sound:    "Beep"
+              })(err);
+      this.emit('end');
+  };
   return gulp.src( srcPath + 'modules/**/*.html')
+        .pipe(plugins.plumber({errorHandler: onError}))
         .pipe(plugins.cmdJst({
                 cmd : true,
                 namespace : false,
