@@ -8,7 +8,7 @@
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-cmd-jst": "latest",
-    "gulp-cmd-transit": "^1.0.0",
+    "gulp-cmd-transit": "latest",
     "gulp-concat": "^2.4.1",
     "gulp-connect": "^2.2.0",
     "gulp-consolidate": "^0.1.2",
@@ -16,6 +16,7 @@
     "gulp-iconfont": "^4.0.0",
     "gulp-image-resize": "^0.6.0",
     "gulp-imagemin": "^2.3.0",
+    "gulp-jslint": "^0.2.2",
     "gulp-less": "^1.3.6",
     "gulp-livereload": "^3.8.0",
     "gulp-load-plugins": "^0.7.1",
@@ -29,7 +30,6 @@
     "gulp-sequence": "^0.4.1",
     "gulp-uglify": "~1.0.2",
     "gulp-util": "^3.0.0",
-    "imagemin-pngquant": "^4.2.0",
     "load-pkg": "^0.1.0",
     "lodash": "^3.10.1",
     "through2": "^0.5.1"
@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "imagemagick": "^0.1.3",
-    "imagemin-pngquant": "^4.1.0"
+    "imagemin-pngquant": "^4.2.0"
   },
   "repository": "git://github.com/brucecham/crm2",
   "license": "MIT"

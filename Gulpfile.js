@@ -70,6 +70,9 @@ gulp.task('jst',function(){
 gulp.task('look', function () {
     plugins.livereload.listen();
     gulp.watch([srcPath + '**/*.less'], ['less-min']);
+    // gulp.watch([srcPath + '**/*.js','!'+srcPath + '**/*-html.js']).on('change',function(e){
+    //   jsHintrc(e);
+    // });
     gulp.watch([srcPath + '**/*.html']).on('change',function(e){
       var onError = function(err) {
           plugins.notify.onError({
@@ -101,6 +104,30 @@ gulp.task('look', function () {
     });
 });
 
+/*
+* @desc js校验
+*/
+function jsHintrc(e){
+    var onError = function(err) {
+        plugins.notify.onError({
+                    title:    "Gulp",
+                    subtitle: "Failure!",
+                    message:  "js error: <%= error.message %>",
+                    sound:    "Beep"
+                })(err);
+        this.emit('end');
+    };
+    return gulp.src( e.path,{ base: srcPath + 'modules/' } )
+          .pipe(plugins.plumber({errorHandler: onError}))
+          .pipe(plugins.jslint({
+            nomen: true,
+            sloppy: true,
+            plusplus: true,
+            unparam: true,
+            stupid: true
+          }))
+          .pipe(gulp.dest( srcPath + 'modules/' ));
+}
 /*
 * @desc 清理dist目录文件
 */
@@ -205,8 +232,6 @@ function transportJson(){
   var backJson = '[';
   for(var o in json){
     backJson += '["crm2/modules/' + o.replace(/-revfile/,'')+'","crm2/modules/' + json[o]+'"],';
-    // json[o] = 'crm2-modules/' + json[o];
-    // o = 'crm2-modules/' + o.replace(/-revfile/,'');
   }
   backJson = backJson.substr(0,backJson.length-1)+']';
   return 'seajs.config({map:' + backJson +'});'
