@@ -119,13 +119,7 @@ function jsHintrc(e){
     };
     return gulp.src( e.path,{ base: srcPath + 'modules/' } )
           .pipe(plugins.plumber({errorHandler: onError}))
-          .pipe(plugins.jslint({
-            nomen: true,
-            sloppy: true,
-            plusplus: true,
-            unparam: true,
-            stupid: true
-          }))
+          .pipe(plugins.jslint())
           .pipe(gulp.dest( srcPath + 'modules/' ));
 }
 /*
@@ -169,6 +163,7 @@ gulp.task('min-image', function () {
 gulp.task("cmd",function(){
     return gulp.src([distPath + 'modules/**/*.js'])
         .pipe(plugins.plumber())
+        .pipe(plugins.stripDebug())
         .pipe(plugins.cmdTransit({
               dealIdCallback: function(id){
                 return 'crm2-modules/' + id;
@@ -306,7 +301,7 @@ gulp.task("default",['less-min','jst','look']);
 */
 gulp.task("build",function(cb){
   //plugins.sequence(['less-min','jst','clean'],'copy',['min-image','cmd'],'merge', cb);
-  plugins.sequence(['less-min','jst','clean'],'copy',['min-image','cmd'],'merge', cb);
+  plugins.sequence(['less-min','jst','clean'],'copy',['cmd'],'merge', cb);
 });
 gulp.task("md5",function(cb){
   plugins.sequence( 'rev','jsmap', cb);
