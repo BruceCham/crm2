@@ -8,7 +8,7 @@
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.1.0",
     "gulp-cmd-jst": "latest",
-    "gulp-cmd-transit": "~1.0.1",
+    "gulp-cmd-transit": "latest",
     "gulp-concat": "^2.4.1",
     "gulp-connect": "^2.2.0",
     "gulp-consolidate": "^0.1.2",

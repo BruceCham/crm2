@@ -300,8 +300,7 @@ gulp.task("default",['less-min','jst','look']);
 * @desc 代码构建
 */
 gulp.task("build",function(cb){
-  //plugins.sequence(['less-min','jst','clean'],'copy',['min-image','cmd'],'merge', cb);
-  plugins.sequence(['less-min','jst','clean'],'copy',['cmd'],'merge', cb);
+  plugins.sequence(['less-min','jst','clean'],'copy',['min-image','cmd'],'merge', cb);
 });
 gulp.task("md5",function(cb){
   plugins.sequence( 'rev','jsmap', cb);
