@@ -138,6 +138,9 @@ gulp.task("copy",function(){
             srcPath + '**/*.*',
             '!'+srcPath+"**/*.less",
             '!'+srcPath+"**/*.sass",
+            '!'+srcPath+"/modules/common/echarts/**/*.*",
+            '!'+srcPath+"/modules/page/databoard/**/*.*",
+            '!'+srcPath+"**/*.sass",
             '!'+srcPath+"assets/svg/**/*.*"
          ])
          .pipe( gulp.dest( distPath ) )
@@ -170,6 +173,8 @@ gulp.task("cmd",function(){
               }
             }))
         .pipe( gulp.dest( distPath + 'modules/' ) )
+        .pipe(plugins.uglify())
+        .pipe( gulp.dest( distPath + 'modules/' ) )
 });
 
 /*
@@ -180,7 +185,8 @@ function getRevMergeFileSrc(){
   if(!json) return;
   var delDataArr = [];
   for(var o in json){
-    delDataArr.push(distPath + 'modules/' + o + "/" + json[o] + "-revfile*.js");
+    delDataArr.push(distPath + 'modules/' + o + "/*");
+    delDataArr.push('!' + distPath + 'modules/' + o + "/" + json[o] + "-revfile-*.js");
   }
   return delDataArr;
 }
@@ -203,7 +209,7 @@ gulp.task('merge',function(){
         gulp.src( distPath + 'modules/' + o + "/**/*.js" ) 
             .pipe(plugins.plumber())
             .pipe(plugins.concat( json[o] + ".js"))
-            .pipe(plugins.uglify())
+            // .pipe(plugins.uglify())
             .pipe( gulp.dest( distPath + 'modules/' + o + "/" ) )
             .pipe(plugins.rename({suffix: '-revfile'}))
             .pipe( gulp.dest( distPath + 'modules/' + o + "/" ) )
@@ -303,7 +309,7 @@ gulp.task("build",function(cb){
   plugins.sequence(['less-min','jst','clean'],'copy',['min-image','cmd'],'merge', cb);
 });
 gulp.task("md5",function(cb){
-  plugins.sequence( 'rev','jsmap', cb);
+  plugins.sequence( 'rev','jsmap','del', cb);
 });
 
 gulp.task('connect-develop', function() {
