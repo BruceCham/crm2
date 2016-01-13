@@ -31,7 +31,6 @@ gulp
 打包合并，加入md5，文件map config
 ```
 gulp build
-gulp md5
 ```
 
 Note: 
