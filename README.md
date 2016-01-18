@@ -28,16 +28,10 @@ gulp
 
 生产构建
 -----
-打包合并
-```
-gulp build
-```  
-
-生产md5构建
------
 打包合并，加入md5，文件map config
 ```
-gulp build-md5
+gulp build
+gulp md5
 ```
 
 Note: 
