@@ -85,9 +85,6 @@ gulp.task('jst', function() {
 gulp.task('look', function() {
     plugins.livereload.listen();
     gulp.watch([srcPath + '**/*.less'], ['less-min']);
-    // gulp.watch([srcPath + '**/*.js','!'+srcPath + '**/*-html.js']).on('change',function(e){
-    //   jsHintrc(e);
-    // });
     gulp.watch([srcPath + '**/*.html']).on('change', function(e) {
         var onError = function(err) {
             plugins.notify.onError({
@@ -134,28 +131,6 @@ gulp.task('look', function() {
     });
 });
 
-/*
- * @desc js校验
- */
-function jsHintrc(e) {
-    var onError = function(err) {
-        plugins.notify.onError({
-            title: "Gulp",
-            subtitle: "Failure!",
-            message: "js error: <%= error.message %>",
-            sound: "Beep"
-        })(err);
-        this.emit('end');
-    };
-    return gulp.src(e.path, {
-            base: srcPath + 'modules/'
-        })
-        .pipe(plugins.plumber({
-            errorHandler: onError
-        }))
-        .pipe(plugins.jslint())
-        .pipe(gulp.dest(srcPath + 'modules/'));
-}
 /*
  * @desc 清理dist目录文件
  */
@@ -219,14 +194,18 @@ gulp.task("cmd", function() {
 /*
  * @desc 获取需要合并及md5处理的文件路径
  */
-function getRevMergeFileSrc() {
+function getRevMergeFileSrc( isMd5 ) {
     var json = require('./crm2-dist/buildRoute.json');
     if (!json) return;
     var delDataArr = [];
     for (var o in json) {
         delDataArr.push(distPath + 'modules/' + o + "/*");
-        // delDataArr.push('!' + distPath + 'modules/' + o + "/" + json[o] + ".js");
-        delDataArr.push('!' + distPath + 'modules/' + o + "/" + json[o] + "-revfile-*.js");
+        if( isMd5 ){
+            delDataArr.push('!' + distPath + 'modules/' + o + "/" + json[o] + "-revfile-*.js");
+        }else{
+            delDataArr.push('!' + distPath + 'modules/' + o + "/" + json[o] + ".js");
+        }
+        
     }
     return delDataArr;
 }
@@ -237,6 +216,9 @@ function getRevMergeFileSrc() {
 var del = require('del');
 gulp.task('del', function() {
     del(getRevMergeFileSrc());
+});
+gulp.task('del-md5', function() {
+    del(getRevMergeFileSrc( true ));
 });
 
 /*
@@ -313,42 +295,6 @@ gulp.task('maptoapp', function() {
         .pipe(plugins.concat("app.js"))
         .pipe(gulp.dest(distPath))
 });
-/*
- * @desc iconfont svg生成字体库
- */
-var iconSrc = 'crm2/assets/svg/',
-    iconDir = 'crm2/assets/style/';
-// runTimestamp = Math.round(Date.now()/1000);
-gulp.task('iconfont', function() {
-    return gulp.src([iconSrc + '**/*.svg'])
-        .pipe(plugins.iconfont({
-            fontName: 'fxiaokefont' // required
-                //appendUnicode: true, // recommended option
-                //formats: ['ttf', 'eot', 'woff'], // default, 'woff2' and 'svg' are available
-                //timestamp: runTimestamp // recommended to get consistent builds when watching files
-        }))
-        .on('glyphs', function(glyphs, options) {
-            gulp.src([iconSrc + "fxiaokefont.css"])
-                .pipe(plugins.consolidate('lodash', {
-                    glyphs: glyphs,
-                    fontName: 'fxiaokefont',
-                    fontPath: './',
-                    className: 'fxiaoke'
-                }))
-                .pipe(gulp.dest(iconDir));
-
-            gulp.src([iconSrc + "fxiaokefonthtml.css"])
-                .pipe(plugins.consolidate('lodash', {
-                    glyphs: glyphs,
-                    fontName: 'fxiaokefont',
-                    fontPath: './',
-                    className: 'fxiaoke'
-                }))
-                .pipe(plugins.rename('fxiaokefonthtml.html'))
-                .pipe(gulp.dest(iconDir))
-        })
-        .pipe(gulp.dest(iconDir));
-});
 
 /*
  * @desc 默认监听less文件和html转为jst函数
@@ -359,5 +305,9 @@ gulp.task("default", ['less-min', 'jst', 'look']);
  * @desc 代码构建
  */
 gulp.task("build", function(cb) {
-    plugins.sequence('clean', 'copy', ['min-image', 'cmd'], 'merge', buildFileTask, 'rev', 'jsmap', 'del', cb);
+    plugins.sequence('clean', 'copy', ['min-image', 'cmd'], 'merge', buildFileTask, 'del', cb);
+});
+
+gulp.task("build-md5", function(cb) {
+    plugins.sequence('clean', 'copy', ['min-image', 'cmd'], 'merge', buildFileTask, 'rev', 'jsmap', 'del-md5', cb);
 });
