@@ -1,6 +1,6 @@
 {
   "name": "crm",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "crm项目构建清单",
   "dateVersion": "20150901",
   "devDependencies": {
