@@ -28,7 +28,7 @@ gulp
 
 生产构建
 -----
-打包合并，加入md5，文件map config
+打包合并
 ```
 gulp build
 ```  
