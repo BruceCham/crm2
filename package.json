@@ -31,7 +31,7 @@
   },
   "scripts": {
     "predeploy": "node ./tools/predeploy.js",
-    "deploy": "node ./tools/deploy.js module=crm2",
+    "deploy": "node ./tools/deploy.js module=crm",
     "prestart": "cnpm install",
     "start": "gulp",
     "build": "gulp build-md5",

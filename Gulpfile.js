@@ -4,7 +4,7 @@ var fs = require('fs'),
     plugins = gulpLoadPlugins();
 
 var srcPath = "crm2/",
-    distPath = "crm2-dist/";
+    distPath = "crm-dist/";
 
 /*
  * @desc less文件监听、编译
@@ -174,7 +174,7 @@ gulp.task('min-image', function() {
  * @desc Transport JS
  */
 gulp.task("cmd", function() {
-    return gulp.src([ 'crm2-dist/**/*.js','!'+distPath + 'modules/common/echarts/echarts.js'])
+    return gulp.src([ 'crm-dist/**/*.js','!'+distPath + 'modules/common/echarts/echarts.js'])
         .pipe(plugins.plumber())
         .pipe(plugins.cmdTransit({
             dealIdCallback: function(id) {
@@ -186,14 +186,14 @@ gulp.task("cmd", function() {
                 
             }
         }))
-        .pipe(gulp.dest('crm2-dist/'))
+        .pipe(gulp.dest('crm-dist/'))
         .pipe(plugins.uglify({
             mangle: true,
             compress: {
                 drop_console: true
             }
         }))
-        .pipe(gulp.dest( 'crm2-dist/' ))
+        .pipe(gulp.dest( 'crm-dist/' ))
 });
 
 /*
@@ -201,16 +201,16 @@ gulp.task("cmd", function() {
  */
 var buildFileTask = [];
 gulp.task('merge', function() {
-    var json = require('./crm2-dist/buildRoute.json');
+    var json = require('./crm-dist/buildRoute.json');
     if (!json) return;
     for (var o in json) {
         buildFileTask.push(o);
     }
     buildFileTask.forEach(function(fileName) {
         gulp.task(fileName, function() {
-            if( fs.lstatSync( 'crm2-dist/'+fileName ).isDirectory() ){
-                return gulp.src( 'crm2-dist/'+fileName + "/**/*.js")
-                .pipe(plugins.order(['crm2-dist/' + fileName + "/**/*.js"]))
+            if( fs.lstatSync( 'crm-dist/'+fileName ).isDirectory() ){
+                return gulp.src( 'crm-dist/'+fileName + "/**/*.js")
+                .pipe(plugins.order(['crm-dist/' + fileName + "/**/*.js"]))
                 .pipe(plugins.plumber())
                 .pipe(plugins.concat(json[fileName] + ".js"))
                 .pipe(plugins.uglify({
@@ -219,13 +219,13 @@ gulp.task('merge', function() {
                         drop_console: true
                     }
                 }))
-                .pipe(gulp.dest('crm2-dist/' + fileName + "/"))
+                .pipe(gulp.dest('crm-dist/' + fileName + "/"))
                 .pipe(plugins.rename({
                     suffix: '-revfile'
                 }))
-                .pipe(gulp.dest('crm2-dist/' + fileName + "/"))
+                .pipe(gulp.dest('crm-dist/' + fileName + "/"))
             }else{
-                return gulp.src( 'crm2-dist/'+fileName )
+                return gulp.src( 'crm-dist/'+fileName )
                 .pipe(plugins.plumber())
                 .pipe(plugins.uglify({
                     mangle: true,
@@ -233,11 +233,11 @@ gulp.task('merge', function() {
                         drop_console: true
                     }
                 }))
-                .pipe(gulp.dest('crm2-dist/' + json[fileName]))
+                .pipe(gulp.dest('crm-dist/' + json[fileName]))
                 .pipe(plugins.rename({
                     suffix: '-revfile'
                 }))
-                .pipe(gulp.dest('crm2-dist/' + json[fileName]))
+                .pipe(gulp.dest('crm-dist/' + json[fileName]))
             }
             
         });
@@ -247,16 +247,16 @@ gulp.task('merge', function() {
  * @desc 文件进行md5加密处理
  */
 gulp.task('md5-img', function() {
-    return gulp.src( ['crm2-dist/**/*.{png,jpg,gif}'])
+    return gulp.src( ['crm-dist/**/*.{png,jpg,gif}'])
         .pipe(plugins.rev())
-        .pipe(gulp.dest('crm2-dist/'))
+        .pipe(gulp.dest('crm-dist/'))
         .pipe(plugins.rev.manifest('rev-imgmanifest.json'))
         .pipe(gulp.dest(distPath))
 });
 
 gulp.task("dealImgCss",function (){
     var dealCss = require('./dealCssImg');
-    var json = require('./crm2-dist/rev-imgmanifest.json');
+    var json = require('./crm-dist/rev-imgmanifest.json');
     if (!json) return;
     var imgArr = [];
     for (var o in json) {
@@ -266,22 +266,22 @@ gulp.task("dealImgCss",function (){
             );
         }
     }
-    return gulp.src('./crm2-dist/assets/style/all.css')
+    return gulp.src('./crm-dist/assets/style/all.css')
     .pipe( plugins.minifyCss() )
     .pipe( dealCss( imgArr ) )
-    .pipe( gulp.dest('./crm2-dist/assets/style/') )
+    .pipe( gulp.dest('./crm-dist/assets/style/') )
 });
 
 gulp.task('md5-css-js', function() {
-    return gulp.src( ['crm2-dist/**/*-revfile.js','crm2-dist/**/*.css'])
+    return gulp.src( ['crm-dist/**/*-revfile.js','crm-dist/**/*.css'])
         .pipe(plugins.rev())
-        .pipe(gulp.dest('crm2-dist/'))
+        .pipe(gulp.dest('crm-dist/'))
         .pipe(plugins.rev.manifest())
         .pipe(gulp.dest(distPath))
 });
 
 function transportJson() {
-    var json = require('./crm2-dist/rev-manifest.json');
+    var json = require('./crm-dist/rev-manifest.json');
     if (!json) return;
     var backJson = '[';
     for (var o in json) {
@@ -301,7 +301,7 @@ function transportJson() {
 gulp.task('jsmap', function() {
     var strs = transportJson();
     var fs = require("fs");
-    fs.writeFile('./crm2-dist/map.js', strs, function(err) {
+    fs.writeFile('./crm-dist/map.js', strs, function(err) {
         if (err) {
             return console.error(err);
         }
@@ -312,16 +312,16 @@ gulp.task('jsmap', function() {
  * @desc 获取需要合并及md5处理的文件路径
  */
 function getRevMergeFileSrc( isMd5 ) {
-    var json = require('./crm2-dist/buildRoute.json');
+    var json = require('./crm-dist/buildRoute.json');
     if (!json) return;
     var delDataArr = [];
     for (var o in json) {
-        if( fs.lstatSync( 'crm2-dist/'+ o ).isDirectory() ){
-            delDataArr.push( 'crm2-dist/' + o + "/*");
+        if( fs.lstatSync( 'crm-dist/'+ o ).isDirectory() ){
+            delDataArr.push( 'crm-dist/' + o + "/*");
             if( isMd5 ){
-                delDataArr.push('!crm2-dist/' + o + "/" + json[o] + "-revfile-*.js");
+                delDataArr.push('!crm-dist/' + o + "/" + json[o] + "-revfile-*.js");
             }else{
-                delDataArr.push('!crm2-dist/' + o + "/" + json[o] + ".js");
+                delDataArr.push('!crm-dist/' + o + "/" + json[o] + ".js");
             }
         }
     }
@@ -336,19 +336,19 @@ gulp.task('del', function() {
     del(getRevMergeFileSrc());
 });
 gulp.task('del-tpls', function() {
-    del([ 'crm2-dist/app-revfile.js','crm2-dist/tpls/main/*.*','!crm2-dist/tpls/main/main.*js' ]);
+    del([ 'crm-dist/app-revfile.js','crm-dist/tpls/main/*.*','!crm-dist/tpls/main/main.*js' ]);
 });
 gulp.task('del-modules', function() {
     del(getRevMergeFileSrc( true ));
 });
 function delAssetsFiles() {
-    var json = require('./crm2-dist/rev-manifest.json');
+    var json = require('./crm-dist/rev-manifest.json');
     if (!json) return;
-    var delDataArr = ['crm2-dist/app*.js','!crm2-dist/*revfile-*.js','crm2-dist/tpls/main/*.*','!crm2-dist/tpls/main/*revfile-*.*'];
+    var delDataArr = ['crm-dist/app*.js','!crm-dist/*revfile-*.js','crm-dist/tpls/main/*.*','!crm-dist/tpls/main/*revfile-*.*'];
     // 暂时不删除原图片
     // for (var o in json) {
     //     if( /assets/.test( o ) ){
-    //         delDataArr.push( 'crm2-dist/' + o );
+    //         delDataArr.push( 'crm-dist/' + o );
     //     }
     // }
     return delDataArr;
