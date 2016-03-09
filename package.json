@@ -34,13 +34,12 @@
     "deploy": "node ./tools/deploy.js module=crm2",
     "prestart": "cnpm install",
     "start": "gulp",
-    "build": "gulp build && gulp md5",
-    "build-product": "gulp build && gulp del",
-    "build-development": "gulp build && gulp del"
+    "build": "gulp build-md5",
+    "build-product": "gulp build",
+    "build-development": "gulp build"
   },
   "dependencies": {
-    "imagemagick": "^0.1.3",
-    "imagemin-pngquant": "^4.2.0"
+    "imagemin-pngquant": "^4.2.2"
   },
   "repository": "git://github.com/brucecham/crm2",
   "license": "MIT"
