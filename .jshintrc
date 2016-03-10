@@ -1,26 +1,28 @@
 {
-  "sub":true,
-  "laxbreak":true,
-  "laxcomma":true,
-  "regexp":true,
-  "asi": true,
   "browser": true,
-  "loopfunc":true,
-  "expr":true,
-  "node": true,
-  "es5": true,
-  "esnext": true,
-  "bitwise": true,
-  "curly": true,
-  "immed": true,
-  "latedef": false,
-  "expr": true,
-  "eqeqeq": false,
-  "eqnull": false,
-  "newcap": true,
-  "noarg": true,
+  "eqnull": true,
   "undef": true,
-  "proto": true,
-  "strict": false,
-  "smarttabs": true
+  "laxbreak": true, //不检查换行
+  "scripturl": true, //容忍javascript:void(0)
+  "devel": true, // 允许alert,console
+  "loopfunc": true, //允许循环内写闭包函数
+  "globals": {
+      "_": true,
+      "$": true,
+      "jQuery": true,
+      "Backbone": true,
+      "seajs": true,
+      "define": true,
+      "FS": true,
+      "Zclip": true,
+      "scheduler": true,
+      "dhtmlXScheduler": true
+  },
+  "-W030": true, //忽略：一行内有多条表达式，a = b, c = d;
+  "-W018": true, //忽略：Confusing use of '!'
+  "-W084": true, //忽略：表达式内变量赋值，if(a = fn())
+  "-W069": true, //忽略：['{a}'] is better written in dot notation
+  "-W041": true, //忽略：Use '===' to compare with
+  "-W033": true, //忽略: Missing semicolon漏掉分号
+  "-W032": true  //忽略：Unnecessary semicolon 不必要的分号
 }

@@ -129,8 +129,40 @@ gulp.task('look', function() {
             }))
             .pipe(plugins.livereload());
     });
+    gulp.watch([srcPath + '**/*.js','!'+srcPath + '**/*-html.js']).on('change',function(e){
+      jsHintrc(e);
+    });
 });
-
+/*
+ * @desc js校验
+ */
+function jsHintrc(e){
+    var onError = function(err) {
+        plugins.notify.onError({
+            title:    "Gulp",
+            subtitle: "Failure!",
+            message:  "js代码不规范,看控制台先!!!",
+            sound:    "Beep"
+        })(err);
+        this.emit('end');
+    };
+    gulp.src( e.path,{ base: srcPath } )
+        .pipe(plugins.plumber({errorHandler: onError}))
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter(function (result, data, opt){
+            if( result ){
+                console.log( result );
+            }
+            return result;
+        }))
+        .pipe(plugins.jshint.reporter('fail'))
+        .pipe(plugins.notify({
+            title: 'Gulp',
+            subtitle: 'success',
+            message: 'js OK now',
+            sound: "Pop"
+        }))
+}
 /*
  * @desc 清理dist目录文件
  */
@@ -169,12 +201,30 @@ gulp.task('min-image', function() {
         }))
         .pipe(gulp.dest(srcPath));
 });
-
+/*
+* @desc 检查全部js文件
+*/
+gulp.task('checkJs',function(){
+    return gulp.src([
+            'crm-dist/**/*.js',
+            '!crm-dist/**/*-html.js',
+            '!crm-dist/**/*.html.js',
+            '!crm-dist/modules/common/echarts/*.js'
+        ])
+        .pipe(plugins.jshint())
+        .pipe(plugins.jshint.reporter(function (result, data, opt){
+            if( result ){
+                console.log( result );
+            }
+            return result;
+        }))
+        .pipe(plugins.jshint.reporter('fail'));
+});
 /*
  * @desc Transport JS
  */
 gulp.task("cmd", function() {
-    return gulp.src([ 'crm-dist/**/*.js','!'+distPath + 'modules/common/echarts/echarts.js'])
+    return gulp.src([ 'crm-dist/**/*.js','!crm-dist/modules/common/echarts/echarts.js'])
         .pipe(plugins.plumber())
         .pipe(plugins.cmdTransit({
             dealIdCallback: function(id) {
@@ -366,7 +416,7 @@ gulp.task("default", ['less-min', 'jst', 'look']);
  * @desc 代码构建
  */
 gulp.task("build", function(cb) {
-    plugins.sequence('clean', 'copy', ['cmd'], 'merge', buildFileTask ,'del','del-tpls',cb);
+    plugins.sequence('clean', 'copy', 'checkJs', ['cmd'], 'merge', buildFileTask ,'del','del-tpls',cb);
 });
 
 gulp.task("build-md5", function(cb) {
